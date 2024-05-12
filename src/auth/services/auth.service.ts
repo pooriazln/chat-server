@@ -1,4 +1,8 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  ConflictException,
+  Injectable,
+} from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { UserService } from '../../user/user.service';
 import { User } from 'src/user/entities/user.entity';
@@ -27,7 +31,6 @@ export class AuthService {
   }
 
   async login(user: User): Promise<{ accessToken: string }> {
-    console.log('1', { user });
     const payload = { sub: user._id };
     return {
       accessToken: this.jwtService.sign(payload),
@@ -35,10 +38,18 @@ export class AuthService {
   }
 
   async register(registerDto: RegisterDto) {
-    return this.userService.create(
+    const userExist = await this.userService.findByUsername(
+      registerDto.username,
+    );
+
+    if (userExist) throw new ConflictException('username already taken');
+
+    const user = await this.userService.create(
       registerDto.username,
       registerDto.password,
       registerDto.profile_img,
     );
+
+    return this.login(user);
   }
 }

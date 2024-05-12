@@ -6,6 +6,7 @@ import { AuthModule } from './auth/auth.module';
 import { APP_GUARD } from '@nestjs/core';
 import { JwtGuard } from './auth/guards/jwt.guard';
 import { JwtStrategy } from './auth/strategies/jwt.strategy';
+import { ChatModule } from './chat/chat.module';
 
 @Module({
   imports: [
@@ -13,6 +14,7 @@ import { JwtStrategy } from './auth/strategies/jwt.strategy';
     DatabaseModule,
     UserModule,
     AuthModule,
+    ChatModule,
   ],
   providers: [
     {
